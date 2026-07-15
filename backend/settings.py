@@ -13,11 +13,11 @@ from typing import ClassVar
 import yaml
 from pydantic import BaseModel
 
-try:  # optional .env support
+try:
     from dotenv import load_dotenv
 
     load_dotenv()
-except Exception:  # pragma: no cover - dotenv is optional
+except Exception:
     pass
 
 
@@ -33,7 +33,7 @@ class STTConfig(BaseModel):
     model_size: str = "small"
     device: str = "cuda"
     compute_type: str = "int8_float16"
-    language: str = "auto"  # "auto" = detect per utterance; or an ISO code like "en"/"pt"
+    language: str = "auto"
 
 
 class LLMConfig(BaseModel):
@@ -58,7 +58,6 @@ class LLMConfig(BaseModel):
 
 class TTSConfig(BaseModel):
     engine: str = "piper"
-    # Per-language voices; the engine auto-picks based on the reply's language.
     default_language: str = "en"
     voices: dict[str, str] = {
         "en": "en_US-lessac-medium",
@@ -69,7 +68,7 @@ class TTSConfig(BaseModel):
 class ServerConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8000
-    warmup: bool = True  # preload models at startup so the first reply isn't slow
+    warmup: bool = True
 
 
 class CaptureConfig(BaseModel):
@@ -78,8 +77,8 @@ class CaptureConfig(BaseModel):
 
 class PronunciationConfig(BaseModel):
     enabled: bool = True
-    low_confidence: float = 0.6   # Whisper word probability below this = "unclear"
-    min_similarity: float = 0.80  # if phones match this well AND nothing unclear, skip note
+    low_confidence: float = 0.6
+    min_similarity: float = 0.80
 
 
 class Settings(BaseModel):
@@ -91,7 +90,6 @@ class Settings(BaseModel):
     capture: CaptureConfig = CaptureConfig()
     pronunciation: PronunciationConfig = PronunciationConfig()
 
-    # --- loading -----------------------------------------------------------
     @classmethod
     def load(cls, config_file: str | None = None) -> "Settings":
         config_file = config_file or os.environ.get("VCL_CONFIG_FILE", "config.yaml")
@@ -128,7 +126,6 @@ class Settings(BaseModel):
                 coerced = float(value)
             setattr(group, field, coerced)
 
-    # --- validation --------------------------------------------------------
     SUPPORTED_TTS_ENGINES: ClassVar[tuple[str, ...]] = ("piper", "kokoro")
 
     def validate_assets(self) -> None:
@@ -160,7 +157,6 @@ class Settings(BaseModel):
         elif self.tts.engine == "piper":
             for lang, voice in self.tts.voices.items():
                 voice_file = tts_dir / f"{voice}.onnx"
-                # Piper voices may be nested; search if not at the top level.
                 if not voice_file.is_file() and not list(tts_dir.rglob(f"{voice}.onnx")):
                     problems.append(
                         f"Piper voice for '{lang}' ('{voice}.onnx') not found under "

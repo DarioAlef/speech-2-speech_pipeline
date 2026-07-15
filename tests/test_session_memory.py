@@ -33,7 +33,6 @@ def test_second_turn_includes_first_turn_context():
     _run(pipe, session, "pergunta 1")
     _run(pipe, session, "e a segunda?")
 
-    # On the second call the LLM must have seen turn 1 (user + assistant) + turn 2 user.
     second_call_msgs = llm.calls[1]
     contents = [m["content"] for m in second_call_msgs]
     assert "pergunta 1" in contents
@@ -52,7 +51,6 @@ def test_new_session_has_no_carryover():
     session2 = ConversationSession("sys")
     _run(pipe, session2, "novo assunto")
 
-    # The fresh session's first call starts from only the system prompt + its user turn.
     fresh_first_call = llm.calls[-1]
     assert fresh_first_call[0] == {"role": "system", "content": "sys"}
     assert all("algo antigo" not in m["content"] for m in fresh_first_call)

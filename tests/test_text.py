@@ -46,7 +46,7 @@ def test_session_language_selection():
     assert session.reply_language == "en"
     session.set_reply_language("pt")
     assert session.reply_language == "pt"
-    session.set_reply_language("xx")  # invalid -> unchanged
+    session.set_reply_language("xx")
     assert session.reply_language == "pt"
     session.reset()
-    assert session.reply_language == "en"  # back to default
+    assert session.reply_language == "en"

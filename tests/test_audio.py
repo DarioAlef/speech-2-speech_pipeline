@@ -31,7 +31,7 @@ def test_clipping():
 def test_pcm_bytes_length_matches_samples():
     audio = np.linspace(-1, 1, 100, dtype=np.float32)
     data = float32_to_pcm16_bytes(audio)
-    assert len(data) == 100 * 2  # int16 = 2 bytes/sample
+    assert len(data) == 100 * 2
 
 
 def test_to_mono_averages_channels():

@@ -13,7 +13,6 @@ from backend.utils.logging_config import get_logger
 
 log = get_logger("llm")
 
-# Per-turn language steering appended (ephemerally) to the messages, not stored.
 _STEER = {
     "en": "Reply in English only for this response.",
     "pt": "Responda apenas em português nesta resposta.",
@@ -54,13 +53,10 @@ class ChatEngine:
         """Append the user turn, stream reply deltas, then record the assistant turn."""
         llm = self._ensure_model()
         session.add_user(user_text)
-        # Build messages = history + an ephemeral language-steering instruction
-        # (not stored in history, so it doesn't accumulate).
         messages = list(session.history)
         steer = _STEER.get(getattr(session, "reply_language", None))
         if steer:
             messages.append({"role": "system", "content": steer})
-        # Ephemeral pronunciation note (consumed once, never stored in history).
         pron = getattr(session, "pending_pronunciation", None)
         if pron:
             messages.append({"role": "system", "content": pron})

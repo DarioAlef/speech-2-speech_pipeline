@@ -17,7 +17,6 @@ from backend.utils.logging_config import get_logger
 
 log = get_logger("tts")
 
-# --- lightweight pt-vs-en language guess (dependency-free) ------------------
 _PT_DIACRITICS = set("ãõçáéíóúâêôàü")
 _PT_WORDS = {
     "você", "voce", "está", "esta", "não", "nao", "é", "com", "para", "obrigado",
@@ -63,7 +62,6 @@ class TextToSpeech:
         self._backends: dict[str, object] = {}
         self._rates: dict[str, int] = {}
 
-    # --- loading -----------------------------------------------------------
     def _resolve_language(self, lang: str) -> str:
         return lang if lang in self.voices else self.default_language
 
@@ -109,7 +107,6 @@ class TextToSpeech:
         log.info("Loading Kokoro %s", model)
         return Kokoro(str(model), str(voices)), 24000
 
-    # --- synthesis ---------------------------------------------------------
     def synthesize(self, sentence: str) -> tuple[np.ndarray, int]:
         """Synthesize a sentence to (float32 mono, sample_rate), voice by language."""
         lang = self._resolve_language(detect_language(sentence, self.default_language))

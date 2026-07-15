@@ -22,11 +22,8 @@ class ConversationSession:
         self.history: list[dict] = [{"role": "system", "content": system_prompt}]
         self.state: SessionState = SessionState.IDLE
         self.created_at: float = time.time()
-        # Language the assistant is asked to reply in ("en" / "pt"); set from the UI.
         self.default_reply_language = reply_language
         self.reply_language = reply_language
-        # Ephemeral pronunciation note for the next reply (set by the pipeline,
-        # consumed + cleared by the LLM). Not stored in history.
         self.pending_pronunciation: str | None = None
 
     def add_user(self, text: str) -> None:

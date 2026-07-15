@@ -33,7 +33,7 @@ class VoiceActivityDetector:
             self._model = load_silero_vad()
             self._get_speech_timestamps = get_speech_timestamps
             return True
-        except Exception as exc:  # pragma: no cover - depends on optional ML stack
+        except Exception as exc:
             log.warning("Silero VAD unavailable (%s); using duration cap only.", exc)
             return False
 
@@ -56,11 +56,10 @@ class VoiceActivityDetector:
                 tensor, self._model, sampling_rate=sample_rate, threshold=self.threshold
             )
             if not timestamps:
-                # No speech detected at all — return empty so STT yields "" (FR-012).
                 return np.zeros(0, dtype=np.float32)
             start = timestamps[0]["start"]
             end = timestamps[-1]["end"]
             return audio[start:end]
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:
             log.warning("VAD trim failed (%s); returning raw audio.", exc)
             return audio

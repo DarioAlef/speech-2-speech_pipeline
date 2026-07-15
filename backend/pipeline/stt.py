@@ -47,7 +47,6 @@ class SpeechToText:
         return self._model
 
     def _language(self):
-        # "auto"/""/None -> let Whisper detect the language per utterance.
         return None if self.language in (None, "", "auto") else self.language
 
     def transcribe(self, audio: np.ndarray) -> str:

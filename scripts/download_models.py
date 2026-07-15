@@ -25,7 +25,6 @@ LLM_REPO = "bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF"
 LLM_FILE = "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
 
 PIPER_REPO = "rhasspy/piper-voices"
-# (glob pattern, flattened voice name) for each language.
 PIPER_VOICES = [
     ("pt/pt_BR/faber/medium/*", "pt_BR-faber-medium"),
     ("en/en_US/lessac/medium/*", "en_US-lessac-medium"),
@@ -93,12 +92,11 @@ def download_tts() -> None:
 def download_vad() -> None:
     VAD_DIR.mkdir(parents=True, exist_ok=True)
     try:
-        # The `silero-vad` PyPI package bundles the model; this just warms the cache.
         from silero_vad import load_silero_vad
 
         load_silero_vad()
         print("✓ Silero VAD available (bundled with silero-vad package)")
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:
         print(f"! Silero VAD warm-up skipped: {exc}")
 
 
@@ -107,9 +105,9 @@ def download_pronunciation() -> None:
     try:
         from allosaurus.app import read_recognizer
 
-        read_recognizer()  # downloads the default model into the package on first call
+        read_recognizer()
         print("✓ Allosaurus phone recognizer ready")
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:
         print(f"! Allosaurus warm-up skipped: {exc}")
 
 

@@ -35,7 +35,7 @@ FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 SAMPLE_RATE = 16000
 
 settings = Settings.load()
-settings.validate_assets()  # fail fast with a clear message if assets are missing (FR-018)
+settings.validate_assets()
 
 vad = VoiceActivityDetector(
     settings.paths.vad_path, max_seconds=settings.capture.max_seconds
@@ -84,7 +84,7 @@ def _warmup() -> None:
         if pron is not None:
             pron._ensure_recognizer()
         log.info("Warm-up complete in %.1fs", time.monotonic() - started)
-    except Exception as exc:  # pragma: no cover - warm-up is best-effort
+    except Exception as exc:
         log.warning("Warm-up skipped/failed: %s", exc)
 
 
@@ -106,7 +106,7 @@ async def index() -> FileResponse:
 
 @app.get("/favicon.ico")
 async def favicon() -> Response:
-    return Response(status_code=204)  # no favicon; silence the 404 noise
+    return Response(status_code=204)
 
 
 async def _stream_response(
@@ -121,7 +121,7 @@ async def _stream_response(
         try:
             for item in pipeline.handle_utterance(session, audio):
                 loop.call_soon_threadsafe(queue.put_nowait, item)
-        except Exception as exc:  # pragma: no cover - runtime safety
+        except Exception as exc:
             loop.call_soon_threadsafe(queue.put_nowait, ("error", str(exc)))
         finally:
             loop.call_soon_threadsafe(queue.put_nowait, None)
@@ -200,7 +200,6 @@ async def voice_ws(websocket: WebSocket) -> None:
                     session.state = SessionState.IDLE
 
             elif data_bytes is not None:
-                # Ignore uplink audio unless actively capturing (no barge-in, FR-014).
                 if session.state == SessionState.CAPTURING and captured_samples < max_samples:
                     chunk = pcm16_bytes_to_float32(data_bytes)
                     buffer.append(chunk)
@@ -208,7 +207,7 @@ async def voice_ws(websocket: WebSocket) -> None:
 
     except WebSocketDisconnect:
         pass
-    except Exception as exc:  # pragma: no cover - runtime safety
+    except Exception as exc:
         log.exception("WebSocket error: %s", exc)
         try:
             await websocket.send_text(
@@ -217,7 +216,7 @@ async def voice_ws(websocket: WebSocket) -> None:
         except Exception:
             pass
     finally:
-        session.reset()  # discard memory on disconnect (FR-013, FR-017)
+        session.reset()
         try:
             await websocket.close()
         except Exception:

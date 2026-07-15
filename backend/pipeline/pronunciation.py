@@ -77,7 +77,6 @@ def format_hint(
 class PronunciationAnalyzer:
     def __init__(self, low_confidence: float = 0.6, min_similarity: float = 0.80):
         self.low_confidence = low_confidence
-        # If phones match this well AND no low-confidence words, skip the note entirely.
         self.min_similarity = min_similarity
         self._recognizer = None
 
@@ -122,7 +121,7 @@ class PronunciationAnalyzer:
 
         try:
             actual = self._recognize_phones(audio, sample_rate)
-        except Exception as exc:  # pragma: no cover - model/runtime safety
+        except Exception as exc:
             log.warning("Phone recognition failed (%s); using confidence only.", exc)
             actual = ""
 
@@ -133,7 +132,6 @@ class PronunciationAnalyzer:
         similarity = None
         if expected and actual:
             similarity = phone_similarity(expected, actual)
-            # Good enough and nothing flagged by the ASR -> no note needed.
             if similarity >= self.min_similarity and not low_conf:
                 return None
 

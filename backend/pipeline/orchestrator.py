@@ -38,14 +38,13 @@ class VoicePipeline:
         self.stt = stt
         self.llm = llm
         self.tts = tts
-        self.pron = pron  # optional PronunciationAnalyzer
+        self.pron = pron
 
     def handle_utterance(
         self, session: ConversationSession, audio: np.ndarray
     ) -> Iterator[tuple]:
         audio = self.vad.prepare(audio)
 
-        # Get per-word detail + detected language only when pronunciation is enabled.
         words: list[dict] = []
         language: str | None = None
         if self.pron is not None:
@@ -59,8 +58,6 @@ class VoicePipeline:
 
         yield ("transcript", user_text)
 
-        # Only analyze pronunciation for English utterances (the language being
-        # practiced). Skipping other languages avoids nonsensical phoneme comparisons.
         if self.pron is not None and words and language == "en":
             try:
                 session.pending_pronunciation = self.pron.analyze(audio, words, user_text)
@@ -73,7 +70,7 @@ class VoicePipeline:
             for sentence in splitter.feed(token):
                 clean = strip_non_speech(sentence)
                 if not clean:
-                    continue  # sentence was only emojis/symbols
+                    continue
                 samples, rate = self.tts.synthesize(clean)
                 yield ("segment", index, clean, samples, rate)
                 index += 1

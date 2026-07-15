@@ -35,7 +35,6 @@ class FakeLLM:
 
 class FakeTTS:
     def synthesize(self, sentence):
-        # 1 sample per character, fixed rate.
         return np.ones(len(sentence), dtype=np.float32), 22050
 
 
@@ -53,11 +52,9 @@ def test_valid_input_produces_ordered_segments():
     assert kinds[0] == "transcript"
     segments = [e for e in events if e[0] == "segment"]
     assert len(segments) == 2
-    # indices are 0,1 in order (FR-010)
     assert [s[1] for s in segments] == [0, 1]
     assert segments[0][2] == "Olá."
     assert segments[1][2] == "Como vai?"
-    # each segment carries audio + sample rate
     assert isinstance(segments[0][3], np.ndarray)
     assert segments[0][4] == 22050
 
@@ -67,7 +64,6 @@ def test_empty_transcript_yields_no_speech_only():
     session = ConversationSession("sys")
     events = list(pipe.handle_utterance(session, np.zeros(10, dtype=np.float32)))
     assert events == [("no_speech",)]
-    # No turn recorded (FR-012): history still only the system prompt.
     assert session.history == [{"role": "system", "content": "sys"}]
 
 
@@ -75,6 +71,5 @@ def test_trailing_text_without_terminator_is_flushed():
     pipe = _pipeline(FakeSTT("oi"), FakeLLM("resposta sem ponto"))
     session = ConversationSession("sys")
     segments = [e for e in pipe.handle_utterance(session, np.zeros(10, dtype=np.float32)) if e[0] == "segment"]
-    # No sentence terminator -> whole reply flushed as one segment.
     assert len(segments) == 1
     assert segments[0][2] == "resposta sem ponto"
