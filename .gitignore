@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment (project-local, never global)
+.venv/
+venv/
+
+# Local secrets / overrides
+.env
+
+# Model & voice assets (downloaded into the project, not committed)
+models/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

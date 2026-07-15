@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+websockets
+pydantic-settings
+PyYAML
+faster-whisper
+llama-cpp-python
+silero-vad
+numpy
+soundfile
+piper-tts
+kokoro-onnx
+huggingface-hub
+python-dotenv
+allosaurus
+eng-to-ipa
+pytest

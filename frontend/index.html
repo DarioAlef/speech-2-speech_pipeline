@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Chat Local</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <main>
+    <h1>Voice Chat Local</h1>
+
+    <div class="lang-toggle" id="lang-toggle" role="group" aria-label="Idioma da resposta">
+      <span class="lang-label">Responder em:</span>
+      <button type="button" class="lang-btn" data-lang="pt">🇧🇷 Português</button>
+      <button type="button" class="lang-btn active" data-lang="en">🇺🇸 English</button>
+    </div>
+
+    <button id="talk-btn" disabled>🎙️ Segurar para falar</button>
+    <p id="status" class="status">Conectando…</p>
+
+    <div class="captions">
+      <p id="transcript" class="transcript"></p>
+      <p id="ai-caption" class="ai-caption"></p>
+    </div>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

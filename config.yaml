@@ -1,0 +1,44 @@
+# Voice Chat Local — centralized configuration (FR-016).
+# Everything that shapes the conversation lives here; no code edits needed.
+
+paths:
+  models_dir: "./models"
+  whisper_dir: "./models/whisper"
+  llm_path: "./models/llm/Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
+  tts_voice_dir: "./models/tts"
+  vad_path: "./models/vad"
+
+stt:
+  model_size: "small"
+  device: "cuda"          # "cuda" or "cpu"
+  compute_type: "int8_float16"
+  language: "auto"        # "auto" detects per utterance (you speak English + sometimes Portuguese)
+
+llm:
+  n_gpu_layers: -1         # -1 = offload as many layers as fit on the GPU
+  n_ctx: 4096
+  temperature: 0.7
+  max_tokens: 320          # hard cap; a bit more room for a correction + reply
+  system_prompt: "You are a friendly, patient bilingual English tutor helping a Brazilian learner practice spoken English. Keep replies short and conversational (2-3 sentences). When the learner makes a mistake in grammar or word choice, gently point it out and show the natural way to say it. You may receive a system note with a phonetic analysis of the learner's pronunciation; if it shows a clear mispronunciation, briefly correct it and describe the correct sound in plain words. Follow the system instruction about which language to reply in. IMPORTANT: never use emojis, emoticons, symbol characters, or raw IPA phonetic symbols in your reply — everything you write is read aloud by a text-to-speech voice, so use only plain spoken words and normal punctuation."
+
+tts:
+  engine: "piper"          # "piper" (default) or "kokoro"
+  default_language: "en"   # voice used when a reply's language is ambiguous
+  voices:                  # engine auto-switches per reply language
+    en: "en_US-lessac-medium"
+    pt: "pt_BR-faber-medium"
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  warmup: true             # preload models at startup so the first reply isn't slow
+
+# Utterance capture safety cap in seconds (FR-020).
+capture:
+  max_seconds: 30
+
+# Pronunciation analysis: Whisper word-confidence + Allosaurus phones vs G2P (CPU).
+pronunciation:
+  enabled: true
+  low_confidence: 0.6      # Whisper word probability below this = flag word as "unclear"
+  min_similarity: 0.80     # if phones match this well AND nothing unclear, skip the note
