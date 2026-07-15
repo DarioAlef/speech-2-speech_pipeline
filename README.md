@@ -1,6 +1,6 @@
 # Voice Chat Local — Tutor de Inglês por Voz
 
-Um **professor de inglês bilíngue por voz**, que roda **100% local** no seu computador. Você abre o navegador, segura um botão, fala, e ele responde em voz alta — corrigindo seu inglês. Nenhum áudio ou texto sai da sua máquina.
+Pipeline speech-2-speech com modelos locais e leves para treinar inglês.
 
 ## Objetivo
 
